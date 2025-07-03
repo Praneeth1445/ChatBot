@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Gemini Chatbot
 
 This project is a simple web-based AI chatbot that uses Google's Gemini Generative AI API to generate intelligent responses to user queries. The backend is built with Flask, and the frontend is provided as HTML files for user interaction.
@@ -49,3 +50,6 @@ See `requirements.txt` for Python dependencies.
 
 ## License
 This project is for educational/demo purposes only. 
+=======
+# ChatBot
+>>>>>>> 5104a5355acb0689ef4cf19a78bc1e8863f9bb4c
