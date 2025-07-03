@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chatbot</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #89f7fe, #66a6ff);
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .chat-container {
+      width: 100%;
+      max-width: 500px;
+      height: 600px;
+      display: flex;
+      flex-direction: column;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    header {
+      background: linear-gradient(90deg, #4b6cb7, #182848);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 1.8rem;
+    }
+
+    .chat-box {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      background-color: #f0f4f8;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .message {
+      max-width: 75%;
+      padding: 14px 18px;
+      border-radius: 20px;
+      line-height: 1.5;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .user {
+      align-self: flex-end;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+    }
+
+    .bot {
+      align-self: flex-start;
+      background-color: #e0e7ff;
+      color: #333;
+    }
+
+    .input-container {
+      display: flex;
+      padding: 12px;
+      border-top: 1px solid #ddd;
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    #user-input {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 20px;
+      margin-right: 10px;
+      background-color: #f3f4f6;
+    }
+
+    button {
+      padding: 12px 20px;
+      background: linear-gradient(135deg, #ff7eb3, #ff758c);
+      color: white;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <header>🤖 AI Chatbot</header>
+    <div class="chat-box" id="chat-box"></div>
+    <div class="input-container">
+      <input type="text" id="user-input" placeholder="Ask me anything...">
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <script>
+    const chatBox = document.getElementById('chat-box');
+    const userInput = document.getElementById('user-input');
+
+    userInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+
+    async function sendMessage() {
+      const message = userInput.value.trim();
+      if (!message) return;
+
+      appendMessage('user', message);
+      userInput.value = '';
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      const botMsg = document.createElement('div');
+      botMsg.className = 'message bot';
+      botMsg.textContent = 'Thinking...';
+      chatBox.appendChild(botMsg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      try {
+        const response = await fetch('http://127.0.0.1:5000/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: message })
+        });
+
+        const data = await response.json();
+        botMsg.textContent = data.response;
+      } catch (error) {
+        botMsg.textContent = 'Error fetching response.';
+      }
+
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function appendMessage(sender, text) {
+      const msg = document.createElement('div');
+      msg.className = `message ${sender}`;
+      msg.textContent = text;
+      chatBox.appendChild(msg);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini Chatbot</title>
+    
+    <style>body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f4f4f4;
+    }
+    
+    .chat-container {
+        width: 400px;
+        max-width: 100%;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+    }
+    
+    .chat-box {
+        height: 300px;
+        overflow-y: scroll;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .chat-box p {
+        margin: 5px 0;
+    }
+    
+    #user-input {
+        width: calc(100% - 100px);
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    
+    button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    
+    button:hover {
+        background-color: #0056b3;
+    }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-box" id="chat-box"></div>
+        <input type="text" id="user-input" placeholder="Type your message here..." />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    <script src="script.js"></script>
+</body>
+<script>
+    async function sendMessage() {
+    const userInput = document.getElementById("user-input").value;
+    if (!userInput) return;
+
+    // Display user's message
+    const chatBox = document.getElementById("chat-box");
+    chatBox.innerHTML += `<p><strong>You:</strong> ${userInput}</p>`;
+
+    // Send user's message to the server
+    const response = await fetch("http://127.0.0.1:5000/chat", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ query: userInput })
+    });
+
+    const data = await response.json();
+
+    // Display chatbot's response
+    chatBox.innerHTML += `<p><strong>Chatbot:</strong> ${data.response}</p>`;
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    // Clear input
+    document.getElementById("user-input").value = "";
+}
+
+</script>
+</html>
